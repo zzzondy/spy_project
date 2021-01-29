@@ -133,21 +133,34 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
-def game_over():
+def game_over_first():
     """Функция конца игры"""
     pygame.mixer.music.stop()
     sound_lose.play()
     screen.fill(BLACK)
     screen.blit(over_background, over_background_rect)
     font = pygame.font.Font(None, 50)
-    text = font.render(f'Итого: {str(COUNT)}', True, random.choice(
-        [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
-         BIG_YELLOW]))
+    text = font.render(f'Итого: {str(COUNT)}', True, random_color)
     text_x = 170
     text_y = 270
     screen.blit(text, (text_x, text_y))
     pygame.display.flip()
-    time.sleep(3)
+
+
+def game_over_second():
+    global all_sprites
+    screen.fill(BLACK)
+    screen.blit(over_background, over_background_rect)
+    font = pygame.font.Font(None, 50)
+    text = font.render(f'Итого: {str(COUNT)}', True, random_color)
+    text_x = 170
+    text_y = 270
+    screen.blit(text, (text_x, text_y))
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(cursor)
+    if pygame.mouse.get_focused():
+        all_sprites.draw(screen)
+    pygame.display.flip()
 
 
 # Загрузка спрайтов
@@ -174,6 +187,7 @@ pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white
 sound_lose_length = sound_lose.get_length()
 
 all_sprites = pygame.sprite.Group()
+cursor_sprites = pygame.sprite.Group()
 cursor = pygame.sprite.Sprite()
 cursor.image = pygame.image.load(path.join(img_dir, 'cursor.png'))
 cursor.rect = cursor.image.get_rect()
@@ -188,6 +202,10 @@ for i in range(8):
     all_sprites.add(m)
     mobs.add(m)
 
+random_color = random.choice(
+    [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
+     BIG_YELLOW])
+flag_game_over = False
 running = True
 pygame.mixer.music.play()
 while running:
@@ -202,6 +220,10 @@ while running:
         if event.type == pygame.MOUSEMOTION:
             cursor.rect.topleft = event.pos
 
+    if flag_game_over:
+        game_over_second()
+        continue
+
     all_sprites.update()
 
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
@@ -214,9 +236,10 @@ while running:
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
     if hits:
-        running = False
-        game_over()
-        break
+        flag_game_over = True
+        game_over_first()
+        continue
+
     if pygame.mouse.get_focused():
         all_sprites.draw(screen)
 
