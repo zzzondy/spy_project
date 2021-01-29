@@ -147,12 +147,12 @@ def game_over_first():
     pygame.display.flip()
 
 
-def game_over_second(mouse):
+def game_over_second(mouse_in_refresh_pole):
     """Функция конца игры, служащая для нужд разработчика (костыль)."""
     global all_sprites
     screen.fill(BLACK)
     screen.blit(over_background, over_background_rect)
-    if not mouse:
+    if not mouse_in_refresh_pole:
         screen.blit(nonactive_refresh.image, (170, 340))
     else:
         screen.blit(active_refresh.image, (170, 340))
