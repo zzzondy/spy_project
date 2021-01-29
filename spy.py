@@ -163,6 +163,40 @@ def game_over_second():
     pygame.display.flip()
 
 
+def new_game():
+    global all_sprites, cursor, mobs, bullets, player, i, m, random_color, flag_game_over, running, COUNT
+    pygame.display.set_caption("Spy by Vanyok and Artyom")
+    COUNT = 0
+    all_sprites = pygame.sprite.Group()
+    cursor = pygame.sprite.Sprite()
+    cursor.image = pygame.image.load(path.join(img_dir, 'cursor.png'))
+    cursor.rect = cursor.image.get_rect()
+    all_sprites.add(cursor)
+    pygame.mouse.set_visible(False)
+    mobs = pygame.sprite.Group()
+    bullets = pygame.sprite.Group()
+    player = Player()
+    all_sprites.add(player)
+    for i in range(8):
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
+
+    random_color = random.choice(
+        [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
+         BIG_YELLOW])
+    flag_game_over = False
+    pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3'])))
+    pygame.mixer.music.play()
+
+
+def correct_click(mouse_pos):
+    print(mouse_pos)
+    if 170 <= mouse_pos[0] <= 305 and 340 <= mouse_pos[1] <= 370:
+        return True
+    return False
+
+
 # Загрузка спрайтов
 background = pygame.image.load(path.join(img_dir, "starfield.png")).convert()
 background_rect = background.get_rect()
@@ -187,7 +221,6 @@ pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white
 sound_lose_length = sound_lose.get_length()
 
 all_sprites = pygame.sprite.Group()
-cursor_sprites = pygame.sprite.Group()
 cursor = pygame.sprite.Sprite()
 cursor.image = pygame.image.load(path.join(img_dir, 'cursor.png'))
 cursor.rect = cursor.image.get_rect()
@@ -219,6 +252,9 @@ while running:
                 sound_laser.play()
         if event.type == pygame.MOUSEMOTION:
             cursor.rect.topleft = event.pos
+        if event.type == pygame.MOUSEBUTTONUP:
+            if correct_click(event.pos):
+                new_game()
 
     if flag_game_over:
         game_over_second()
