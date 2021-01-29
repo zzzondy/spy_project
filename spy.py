@@ -258,7 +258,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and not flag_game_over:
                 player.shoot()
                 sound_laser.play()
         if event.type == pygame.MOUSEMOTION:
