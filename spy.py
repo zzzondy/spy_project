@@ -191,7 +191,7 @@ def new_game():
         [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
          BIG_YELLOW])
     flag_game_over = False
-    pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3'])))
+    pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3', 'fonk.ogg'])))
     pygame.mixer.music.play()
 
 
@@ -227,7 +227,7 @@ active_refresh.rect = active_refresh.image.get_rect()
 # Загрузка звуков
 sound_laser = pygame.mixer.Sound(path.join(sound_dir, 'sfx_laser1.ogg'))
 sound_lose = pygame.mixer.Sound(path.join(sound_dir, 'sfx_lose.ogg'))
-pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3'])))
+pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3', 'fonk.ogg'])))
 sound_lose_length = sound_lose.get_length()
 
 all_sprites = pygame.sprite.Group()
