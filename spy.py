@@ -174,6 +174,11 @@ pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white
 sound_lose_length = sound_lose.get_length()
 
 all_sprites = pygame.sprite.Group()
+cursor = pygame.sprite.Sprite()
+cursor.image = pygame.image.load(path.join(img_dir, 'cursor.png'))
+cursor.rect = cursor.image.get_rect()
+all_sprites.add(cursor)
+pygame.mouse.set_visible(False)
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 player = Player()
@@ -190,10 +195,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 player.shoot()
                 sound_laser.play()
+        if event.type == pygame.MOUSEMOTION:
+            cursor.rect.topleft = event.pos
 
     all_sprites.update()
 
@@ -203,12 +210,15 @@ while running:
         all_sprites.add(m)
         mobs.add(m)
         COUNT += 10
+        pygame.display.set_caption(f"Spy SCORE: {COUNT}")
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
     if hits:
         running = False
         game_over()
         break
+    if pygame.mouse.get_focused():
+        all_sprites.draw(screen)
 
     screen.fill(BLACK)
     screen.blit(background, background_rect)
