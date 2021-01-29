@@ -134,7 +134,7 @@ class Bullet(pygame.sprite.Sprite):
 
 
 def game_over_first():
-    """Функция конца игры"""
+    """Основаная функция конца игры. Вызывается когда в персонажа попали."""
     pygame.mixer.music.stop()
     sound_lose.play()
     screen.fill(BLACK)
@@ -147,10 +147,15 @@ def game_over_first():
     pygame.display.flip()
 
 
-def game_over_second():
+def game_over_second(mouse):
+    """Функция конца игры, служащая для нужд разработчика (костыль)."""
     global all_sprites
     screen.fill(BLACK)
     screen.blit(over_background, over_background_rect)
+    if not mouse:
+        screen.blit(nonactive_refresh.image, (170, 340))
+    else:
+        screen.blit(active_refresh.image, (170, 340))
     font = pygame.font.Font(None, 50)
     text = font.render(f'Итого: {str(COUNT)}', True, random_color)
     text_x = 170
@@ -190,8 +195,7 @@ def new_game():
     pygame.mixer.music.play()
 
 
-def correct_click(mouse_pos):
-    print(mouse_pos)
+def correct_click_motion(mouse_pos):
     if 170 <= mouse_pos[0] <= 305 and 340 <= mouse_pos[1] <= 370:
         return True
     return False
@@ -213,6 +217,12 @@ laserRed3_img = pygame.image.load(path.join(img_dir, 'laserRed06.png')).convert(
 laserRed4_img = pygame.image.load(path.join(img_dir, 'laserRed01.png')).convert()
 over_background = pygame.image.load(path.join(img_dir, 'over_background.jpg'))
 over_background_rect = over_background.get_rect()
+nonactive_refresh = pygame.sprite.Sprite()
+nonactive_refresh.image = pygame.image.load(path.join(img_dir, 'nonactive_refresh.png'))
+nonactive_refresh.rect = nonactive_refresh.image.get_rect()
+active_refresh = pygame.sprite.Sprite()
+active_refresh.image = pygame.image.load(path.join(img_dir, 'active_refresh.png'))
+active_refresh.rect = active_refresh.image.get_rect()
 
 # Загрузка звуков
 sound_laser = pygame.mixer.Sound(path.join(sound_dir, 'sfx_laser1.ogg'))
@@ -239,6 +249,7 @@ random_color = random.choice(
     [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
      BIG_YELLOW])
 flag_game_over = False
+flag_motion = False
 running = True
 pygame.mixer.music.play()
 while running:
@@ -252,12 +263,19 @@ while running:
                 sound_laser.play()
         if event.type == pygame.MOUSEMOTION:
             cursor.rect.topleft = event.pos
+            if correct_click_motion(event.pos):
+                flag_motion = True
+            else:
+                flag_motion = False
         if event.type == pygame.MOUSEBUTTONUP:
-            if correct_click(event.pos):
+            if correct_click_motion(event.pos):
                 new_game()
 
     if flag_game_over:
-        game_over_second()
+        if flag_motion:
+            game_over_second(True)
+        else:
+            game_over_second(False)
         continue
 
     all_sprites.update()
