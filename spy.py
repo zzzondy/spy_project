@@ -5,7 +5,7 @@
 			        License (CC0)
 	       http://creativecommons.org/publicdomain/zero/1.0/
 	You may use these graphics in personal and commercial projects.
-	Credit (Kenney or www.kenney.nl) would be nice but is not mandatory.
+	Credit (Kenney or www.kenney.nl) would be nice but is not manda tory.
 ###############################################################################
 """
 import pygame
@@ -144,6 +144,7 @@ def game_over_first():
     text_x = 170
     text_y = 270
     screen.blit(text, (text_x, text_y))
+    all_sprites.add(cursor)
     pygame.display.flip()
 
 
@@ -176,7 +177,6 @@ def new_game():
     cursor = pygame.sprite.Sprite()
     cursor.image = pygame.image.load(path.join(img_dir, 'cursor.png'))
     cursor.rect = cursor.image.get_rect()
-    all_sprites.add(cursor)
     pygame.mouse.set_visible(False)
     mobs = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
@@ -191,7 +191,7 @@ def new_game():
         [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
          BIG_YELLOW])
     flag_game_over = False
-    pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3'])))
+    pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3', 'fonk.ogg'])))
     pygame.mixer.music.play()
 
 
@@ -199,6 +199,14 @@ def correct_click_motion(mouse_pos):
     if 170 <= mouse_pos[0] <= 305 and 340 <= mouse_pos[1] <= 370:
         return True
     return False
+
+
+def print_score_on_the_screen():
+    font = pygame.font.Font(None, 50)
+    text = font.render(f'Score: {str(COUNT)}', True, random_color)
+    text_x = 10
+    text_y = 10
+    screen.blit(text, (text_x, text_y))
 
 
 # Загрузка спрайтов
@@ -227,14 +235,13 @@ active_refresh.rect = active_refresh.image.get_rect()
 # Загрузка звуков
 sound_laser = pygame.mixer.Sound(path.join(sound_dir, 'sfx_laser1.ogg'))
 sound_lose = pygame.mixer.Sound(path.join(sound_dir, 'sfx_lose.ogg'))
-pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3'])))
+pygame.mixer.music.load(path.join(sound_dir, random.choice(['ougigi.ogg', 'white_elephants.mp3', 'fonk.ogg'])))
 sound_lose_length = sound_lose.get_length()
 
 all_sprites = pygame.sprite.Group()
 cursor = pygame.sprite.Sprite()
 cursor.image = pygame.image.load(path.join(img_dir, 'cursor.png'))
 cursor.rect = cursor.image.get_rect()
-all_sprites.add(cursor)
 pygame.mouse.set_visible(False)
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
@@ -286,7 +293,6 @@ while running:
         all_sprites.add(m)
         mobs.add(m)
         COUNT += 10
-        pygame.display.set_caption(f"Spy SCORE: {COUNT}")
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
     if hits:
@@ -300,7 +306,8 @@ while running:
     screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
+    print_score_on_the_screen()
     pygame.display.flip()
 
-# Конец
+# Конец. Авторы наелись и спят.
 pygame.quit()
