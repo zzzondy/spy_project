@@ -170,6 +170,7 @@ def game_over_second(mouse_in_refresh_pole):
 
 
 def new_game():
+    """Функция новой игры. Когда нажата кнопка "перезагрузить", она вызывается."""
     global all_sprites, cursor, mobs, bullets, player, i, m, random_color, flag_game_over, running, COUNT
     pygame.display.set_caption("Spy by Vanyok and Artyom")
     COUNT = 0
@@ -196,12 +197,14 @@ def new_game():
 
 
 def correct_click_motion(mouse_pos):
+    """Определяет правильность положения мышки. Венет True если мышка находится в кнопке 'перезагрузить'."""
     if 170 <= mouse_pos[0] <= 305 and 340 <= mouse_pos[1] <= 370:
         return True
     return False
 
 
 def print_score_on_the_screen():
+    """Постоянная отприсовка счета прямо на экране во время игры."""
     font = pygame.font.Font(None, 50)
     text = font.render(f'Score: {str(COUNT)}', True, random_color)
     text_x = 10
@@ -248,26 +251,30 @@ bullets = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 for i in range(8):
+    # генерация мобов.
     m = Mob()
     all_sprites.add(m)
     mobs.add(m)
 
 random_color = random.choice(
     [WHITE, BLUE, YELLOW, GREEN, RED, MAGENTA, CYAN, CVET_ANDREW_NIKOLAEVICHA, MODNIY_ROZOVIY, MODNIY_SINIJ,
-     BIG_YELLOW])
+     BIG_YELLOW]) # Случайный цвет.
 flag_game_over = False
 flag_motion = False
 running = True
 pygame.mixer.music.play()
 while running:
+    # Игровой цикл.
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        # Выстрел.
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 player.shoot()
                 sound_laser.play()
+        # Работа с мышкой
         if event.type == pygame.MOUSEMOTION:
             cursor.rect.topleft = event.pos
             if correct_click_motion(event.pos):
@@ -279,6 +286,7 @@ while running:
                 new_game()
 
     if flag_game_over:
+        # когда игра кончилась.
         if flag_motion:
             game_over_second(True)
         else:
@@ -289,6 +297,7 @@ while running:
 
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
+        # обработка попаданий.
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
@@ -296,11 +305,13 @@ while running:
 
     hits = pygame.sprite.spritecollide(player, mobs, False)
     if hits:
+        # когда персонаж столкнулся.
         flag_game_over = True
         game_over_first()
         continue
 
     if pygame.mouse.get_focused():
+        # отрисовка нового курсора.
         all_sprites.draw(screen)
 
     screen.fill(BLACK)
